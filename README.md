@@ -78,11 +78,70 @@ graph TB
 
 ## 使用方法
 
-### 1. 安装技能
-将以下文件复制到对应位置：
-- `SKILL.md` → `~/.agents/skills/novel/SKILL.md`
-- `novel-*.md` → `~/.opencode/agents/`
-- `novella.json` → `~/.opencode/skills/novel/novella.json`
+### 1. 前置条件
+- 已安装 [OpenCode](https://opencode.ai)
+- 已配置 AI API 密钥
+
+### 2. 安装技能
+
+#### 方法一：手动安装
+
+**Windows系统：**
+```powershell
+# 创建目录
+mkdir -p ~/.agents/skills/novel
+mkdir -p ~/.opencode/agents
+mkdir -p ~/.opencode/skills/novel
+
+# 复制文件
+Copy-Item SKILL.md ~/.agents/skills/novel/SKILL.md
+Copy-Item novel-lead.md ~/.opencode/agents/
+Copy-Item novel-outline.md ~/.opencode/agents/
+Copy-Item novel-audit.md ~/.opencode/agents/
+Copy-Item novel-writer.md ~/.opencode/agents/
+Copy-Item novel-script.md ~/.opencode/agents/
+Copy-Item novel-material.md ~/.opencode/agents/
+Copy-Item novel-video.md ~/.opencode/agents/
+Copy-Item novella.json ~/.opencode/skills/novel/
+```
+
+**Mac/Linux系统：**
+```bash
+# 创建目录
+mkdir -p ~/.agents/skills/novel
+mkdir -p ~/.opencode/agents
+mkdir -p ~/.opencode/skills/novel
+
+# 复制文件
+cp SKILL.md ~/.agents/skills/novel/SKILL.md
+cp novel-lead.md ~/.opencode/agents/
+cp novel-outline.md ~/.opencode/agents/
+cp novel-audit.md ~/.opencode/agents/
+cp novel-writer.md ~/.opencode/agents/
+cp novel-script.md ~/.opencode/agents/
+cp novel-material.md ~/.opencode/agents/
+cp novel-video.md ~/.opencode/agents/
+cp novella.json ~/.opencode/skills/novel/
+```
+
+#### 方法二：Git克隆安装
+```bash
+# 克隆仓库
+git clone https://github.com/python-0612/novel-skill-system.git
+
+# 进入目录
+cd novel-skill-system
+
+# 复制文件（Windows用Copy-Item，Mac/Linux用cp）
+# 参考方法一的复制命令
+```
+
+### 3. 验证安装
+安装完成后，重启OpenCode，然后说：
+- "使用小说创作技能"
+- 或"调用novel skill"
+
+如果系统识别到技能，说明安装成功。
 
 ### 2. 调用技能
 每次对话开始时，说：
