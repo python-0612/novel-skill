@@ -1,6 +1,6 @@
 ---
 name: novel
-version: 8.2.0
+version: 8.3.0
 description: "小说创作与视频生成助手：智能体分工协作系统。包含7个专业智能体和1个总经理，支持流水线模式。从想法到成品（小说+封面+短剧）全自动完成。"
 author: python-0612
 license: MIT
@@ -1077,3 +1077,92 @@ API错误：
 - 已完成：已完成所有章节
 - 暂停中：暂时停止创作
 - 已归档：不再更新的小说
+
+## 自动加载钩子（Evolve Hooks）
+
+### 功能说明
+通过 Evolve 系统创建钩子，确保 novel skill 在每次对话开始时自动加载。
+
+### 钩子文件位置
+```
+~/.mimocode/hooks/
+├── auto-load-novel.ts        # 基础钩子
+└── auto-load-novel-full.ts   # 完整钩子（推荐）
+```
+
+### 触发关键词
+当用户消息包含以下任一关键词时，自动触发加载：
+- 小说、创作、写书、novel、writing
+- 我想写、帮我创建、帮我写
+- 大纲、章节、角色、世界观
+- 封面、视频、短剧
+- 番茄小说、起点中文网
+- 穿越、重生、都市、仙侠、言情、悬疑
+
+### 钩子代码（auto-load-novel-full.ts）
+```typescript
+export default {
+  "experimental.chat.system.transform": async (input, output) => {
+    output.system.push(`
+## 小说创作系统自动加载规则（强制执行）
+
+### 触发关键词
+当用户消息包含以下任一关键词时，必须立即加载 novel skill：
+- 小说、创作、写书、novel、writing
+- 使用小说创作技能、调用novel skill
+- 我想写、帮我创建、帮我写
+- 大纲、章节、角色、世界观
+- 封面、视频、短剧
+- 番茄小说、起点中文网
+- 穿越、重生、都市、仙侠、言情、悬疑
+
+### 加载流程
+1. 检测到关键词 → 立即使用 \`skill\` 工具加载 \`novel\`
+2. 加载后自动执行自检流程
+3. 开始与用户交互
+
+### 强制规则
+- **必须调用智能体，不能自己干活**
+- **必须遵守文件名锁定规则**
+- **必须一个章节一个审计报告**
+- **必须使用中文提示词**
+`)
+  },
+
+  "session.userQuery.pre": async (input, output) => {
+    const message = input.message?.toLowerCase() || ""
+    const keywords = [
+      "小说", "创作", "写书", "novel", "writing",
+      "我想写", "帮我创建", "帮我写",
+      "大纲", "章节", "角色", "世界观",
+      "封面", "视频", "短剧",
+      "番茄小说", "起点中文网",
+      "穿越", "重生", "都市", "仙侠", "言情", "悬疑"
+    ]
+
+    const shouldLoad = keywords.some(kw => message.includes(kw))
+
+    if (shouldLoad) {
+      output.messages = output.messages || []
+      output.messages.push({
+        role: "system",
+        content: "检测到小说创作相关关键词，正在加载 novel skill..."
+      })
+    }
+  },
+}
+```
+
+### 安装方法
+1. 创建目录：`mkdir -p ~/.mimocode/hooks`
+2. 将上述代码保存为 `~/.mimocode/hooks/auto-load-novel-full.ts`
+3. 钩子会在下一个回合自动生效（热重载）
+
+### 三层保护机制
+| 层级 | 文件 | 作用 |
+|------|------|------|
+| 1 | `~/.local/share/mimocode/memory/global/MEMORY.md` | 全局记忆 |
+| 2 | `~/CLAUDE.md` | 项目指令 |
+| 3 | `~/.mimocode/hooks/auto-load-novel-full.ts` | Evolve 钩子 |
+
+**此机制确保 novel skill 永远不会被忘记加载！**
