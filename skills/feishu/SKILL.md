@@ -3,44 +3,64 @@
 > **Author**: python-0612
 > **License**: MIT
 
-本技能提供与飞书平台的完整集成，支持长连接、消息推送、机器人对话、文档同步、审批流等功能。
+本技能提供与飞书平台的完整集成，使用飞书官方SDK，支持长连接、消息推送、机器人对话、文档同步、审批流等功能。
 
-## 连接方式：WebSocket长连接
+## 安装官方SDK
 
-**采用WebSocket长连接，实时响应！**
+```bash
+npm install @larksuiteoapi/node-sdk
+```
+
+## 连接方式：WebSocket长连接（官方SDK）
+
+**使用飞书官方SDK的长连接方式，实时响应！**
+
+### 长连接代码示例
+```javascript
+const lark = require('@larksuiteoapi/node-sdk');
+
+// 创建长连接客户端
+const wsClient = new lark.WSClient({
+  appId: process.env.FEISHU_APP_ID,
+  appSecret: process.env.FEISHU_APP_SECRET,
+  loggerLevel: lark.LoggerLevel.info,
+});
+
+// 创建API客户端
+const client = new lark.Client({
+  appId: process.env.FEISHU_APP_ID,
+  appSecret: process.env.FEISHU_APP_SECRET,
+});
+
+// 启动长连接，监听事件
+wsClient.start({
+  eventDispatcher: new lark.EventDispatcher({}).register({
+    // 接收消息事件
+    'im.message.receive_v1': async (data) => {
+      const { message } = data;
+      console.log('收到消息:', message);
+      await handleMessage(message);
+    },
+    // 卡片回传交互
+    'card.action.trigger': async (data) => {
+      console.log('卡片交互:', data);
+      await handleCardAction(data);
+    },
+  }),
+});
+```
 
 ### 长连接优势
 - 实时响应：消息立即到达，无延迟
-- 节省资源：无需频繁HTTP请求
-- 稳定可靠：自动重连机制
-- 双向通信：服务器可主动推送
+- 无需公网IP：本地开发环境即可接收事件
+- 自动鉴权：SDK内置鉴权逻辑
+- 加密传输：无需额外解密验签
 
-### 长连接配置
-```javascript
-const WebSocket = require('ws');
-
-// 飞书长连接地址
-const WS_URL = 'wss://open.feishu.cn/event/ws';
-
-// 建立长连接
-const ws = new WebSocket(WS_URL, {
-  headers: {
-    'Authorization': `Bearer ${tenant_access_token}`
-  }
-});
-
-// 监听消息
-ws.on('message', (data) => {
-  const event = JSON.parse(data);
-  handleEvent(event);
-});
-
-// 自动重连
-ws.on('close', () => {
-  console.log('连接断开，3秒后重连...');
-  setTimeout(() => reconnect(), 3000);
-});
-```
+### 注意事项
+- 长连接仅支持企业自建应用
+- 收到消息后需在3秒内处理完成
+- 每个应用最多50个连接
+- 消息推送为集群模式，不支持广播
 
 ## 前置条件
 

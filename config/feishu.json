@@ -3,11 +3,19 @@
   "app_secret": "",
   "group_id": "",
   "webhook_url": "",
+  "sdk": {
+    "package": "@larksuiteoapi/node-sdk",
+    "version": "latest"
+  },
   "websocket": {
     "enabled": true,
-    "url": "wss://open.feishu.cn/event/ws",
+    "logger_level": "info",
     "reconnect_interval": 3000,
     "max_reconnect_attempts": 10
+  },
+  "events": {
+    "im.message.receive_v1": "接收消息",
+    "card.action.trigger": "卡片回传交互"
   },
   "permissions": [
     "im:message:send_as_bot",
