@@ -1,0 +1,25 @@
+{
+  "app_id": "",
+  "app_secret": "",
+  "group_id": "",
+  "webhook_url": "",
+  "permissions": [
+    "im:message:send_as_bot",
+    "im:chat:readonly",
+    "docx:document:create",
+    "docx:document:write",
+    "drive:file:upload",
+    "approval:create",
+    "approval:instance:read"
+  ],
+  "message_templates": {
+    "chapter_complete": "📚 章节完成通知\n\n第{chapter_num}章《{chapter_title}》已完成创作！\n\n📊 统计信息：\n- 字数：{word_count}字\n- 耗时：{duration}分钟\n- 质量评分：{score}/100",
+    "audit_result": "📋 审计结果通知\n\n第{chapter_num}章审计完成！\n\n✅ 审计结果：{result}\n\n📊 详细报告：\n- 合规性：{compliance}/100\n- 连贯性：{coherence}/100\n- 一致性：{consistency}/100",
+    "progress_update": "📈 创作进度更新\n\n当前进度：第{current_chapter}章/共{total_chapters}章\n完成度：{progress}%\n预计完成时间：{eta}"
+  },
+  "approval_config": {
+    "outline_approval_code": "",
+    "chapter_approval_code": "",
+    "timeout_hours": 24
+  }
+}

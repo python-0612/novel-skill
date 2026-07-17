@@ -1,12 +1,12 @@
 {
   "name": "novel-skill-opencode",
-  "version": "1.0.8",
-  "description": "小说创作技能一键安装工具 - OpenCode智能体系统",
+  "version": "1.0.9",
+  "description": "小说创作技能一键安装工具 - OpenCode智能体系统，支持飞书集成",
   "bin": {
     "novel-skill": "./cli.js"
   },
   "scripts": {},
-  "keywords": ["opencode", "novel", "skill", "ai", "writing"],
+  "keywords": ["opencode", "novel", "skill", "ai", "writing", "feishu"],
   "author": "python-0612",
   "license": "MIT",
   "files": [

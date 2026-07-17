@@ -25,7 +25,8 @@ const agentFiles = [
   'novel-writer.md',
   'novel-script.md',
   'novel-material.md',
-  'novel-video.md'
+  'novel-video.md',
+  'novel-feishu.md'
 ];
 
 function createDir(dirPath) {
