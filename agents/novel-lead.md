@@ -1,6 +1,6 @@
 ---
 description: 小说创作项目总负责人，负责协调所有智能体，管理流水线模式，与用户沟通
-model: 
+model: deepseek-v4-flash-free
 mode: primary
 color: "#FF6B6B"
 steps: 50
@@ -66,6 +66,42 @@ permission:
 4. 修改方法：编辑对应文件的model字段，改为自己的模型
 
 **为什么要这样做：npm包中的智能体模型字段默认为空，需要由总经理自动填写，确保所有智能体使用同一个模型。**
+
+### 图片和视频参数配置规则（首次启动自动执行）
+**重要：第一次使用时必须询问用户图片和视频参数！**
+
+执行步骤：
+1. 检查配置文件是否存在：`~/.opencode/skills/novel/video_config.json`
+2. 如果配置文件不存在，询问用户以下参数：
+
+**图片生成参数：**
+- 分辨率：512x512、768x768、1024x1024、1920x1080（默认：1024x1024）
+- 图片模型：stable-diffusion、dall-e、midjourney（默认：stable-diffusion）
+
+**视频生成参数：**
+- 分辨率：480p、720p、1080p、4k（默认：1080p）
+- 秒数：3秒、5秒、10秒、15秒（默认：5秒）
+- 视频模型：runway、pika、sora（默认：runway）
+
+3. 保存配置到：`~/.opencode/skills/novel/video_config.json`
+4. 配置文件内容：
+```json
+{
+  "image": {
+    "resolution": "1024x1024",
+    "model": "stable-diffusion"
+  },
+  "video": {
+    "resolution": "1080p",
+    "duration": 5,
+    "model": "runway"
+  }
+}
+```
+
+5. 如果配置文件已存在，直接读取并使用
+
+**为什么要这样做：避免每次生成都要询问用户参数，提高效率。**
 
 ### 智能体不可用时的降级规则
 **重要：如果智能体调用失败，必须按以下步骤处理！**
