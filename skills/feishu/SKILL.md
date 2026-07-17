@@ -1,6 +1,43 @@
 # 飞书集成技能
 
-本技能提供与飞书平台的完整集成，支持消息推送、机器人对话、文档同步、审批流等功能。
+本技能提供与飞书平台的完整集成，支持长连接、消息推送、机器人对话、文档同步、审批流等功能。
+
+## 连接方式：WebSocket长连接
+
+**采用WebSocket长连接，实时响应！**
+
+### 长连接优势
+- 实时响应：消息立即到达，无延迟
+- 节省资源：无需频繁HTTP请求
+- 稳定可靠：自动重连机制
+- 双向通信：服务器可主动推送
+
+### 长连接配置
+```javascript
+const WebSocket = require('ws');
+
+// 飞书长连接地址
+const WS_URL = 'wss://open.feishu.cn/event/ws';
+
+// 建立长连接
+const ws = new WebSocket(WS_URL, {
+  headers: {
+    'Authorization': `Bearer ${tenant_access_token}`
+  }
+});
+
+// 监听消息
+ws.on('message', (data) => {
+  const event = JSON.parse(data);
+  handleEvent(event);
+});
+
+// 自动重连
+ws.on('close', () => {
+  console.log('连接断开，3秒后重连...');
+  setTimeout(() => reconnect(), 3000);
+});
+```
 
 ## 前置条件
 

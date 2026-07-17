@@ -3,6 +3,12 @@
   "app_secret": "",
   "group_id": "",
   "webhook_url": "",
+  "websocket": {
+    "enabled": true,
+    "url": "wss://open.feishu.cn/event/ws",
+    "reconnect_interval": 3000,
+    "max_reconnect_attempts": 10
+  },
   "permissions": [
     "im:message:send_as_bot",
     "im:chat:readonly",
