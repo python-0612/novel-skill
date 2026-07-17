@@ -1,6 +1,6 @@
 ---
 name: novel
-version: 5.0.0
+version: 6.0.0
 description: "小说创作与视频生成助手：智能体分工协作系统。包含8个专业智能体和1个总经理，支持流水线模式。从想法到成品（小说+封面+短剧）全自动完成。支持飞书集成。"
 author: python-0612
 license: MIT
@@ -18,6 +18,54 @@ metadata:
 > **流水线模式**：开启后除关键节点外全部自动完成，大幅提升效率。
 
 > **飞书集成**：支持消息推送、机器人对话、文档同步、审批流。
+
+## 飞书长连接自动启动（首次加载时执行）
+
+**重要：每次加载skill时，必须检查并自动启动飞书长连接！**
+
+### 自动启动流程
+
+1. **检查配置文件**：`~/.opencode/skills/novel/feishu.json`
+2. **如果配置存在且有凭证**：
+   - 自动启动飞书长连接服务
+   - 在后台运行，接收飞书消息
+   - 告诉用户飞书已连接
+3. **如果配置不存在或无凭证**：
+   - 询问用户是否配置飞书
+   - 如果用户说"是"，执行配置流程
+   - 配置完成后自动启动长连接
+4. **如果用户说"跳过"**：
+   - 不启动飞书功能
+   - 继续正常使用小说创作功能
+
+### 启动命令
+```bash
+# 检查配置
+cat ~/.opencode/skills/novel/feishu.json
+
+# 如果配置存在，启动长连接
+node ~/.opencode/skills/novel/feishu-ws.js
+```
+
+### 配置检查逻辑
+```javascript
+// 检查飞书配置
+const configPath = path.join(process.env.USERPROFILE || process.env.HOME, '.opencode', 'skills', 'novel', 'feishu.json');
+
+if (fs.existsSync(configPath)) {
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  if (config.app_id && config.app_secret) {
+    // 配置有效，启动长连接
+    startWebSocket();
+  } else {
+    // 配置无效，询问用户
+    askUserConfig();
+  }
+} else {
+  // 无配置，询问用户
+  askUserConfig();
+}
+```
 
 ## 强制调用规则（必须遵守）
 
