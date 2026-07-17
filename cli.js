@@ -133,11 +133,13 @@ function showHelp() {
   install         安装技能到OpenCode
   uninstall       从OpenCode卸载技能
   feishu-config   配置飞书集成
+  feishu-ws       启动飞书长连接服务
   help            显示此帮助信息
 
 示例：
   novel-skill install
   novel-skill feishu-config
+  novel-skill feishu-ws
   novel-skill uninstall
   `);
 }
@@ -230,6 +232,11 @@ switch (command) {
     break;
   case 'feishu-config':
     configureFeishu();
+    break;
+  case 'feishu-ws':
+    // 启动飞书长连接服务
+    const wsScript = path.join(__dirname, 'feishu-ws.js');
+    require('child_process').fork(wsScript);
     break;
   case 'help':
   case undefined:
