@@ -2,12 +2,16 @@
 name: novel
 version: 5.0.0
 description: "小说创作与视频生成助手：智能体分工协作系统。包含8个专业智能体和1个总经理，支持流水线模式。从想法到成品（小说+封面+短剧）全自动完成。支持飞书集成。"
+author: python-0612
+license: MIT
 metadata:
   requires:
     bins: []
 ---
 
 # 小说创作与视频生成助手（智能体协作系统）
+
+> **作者**：python-0612
 
 > **智能体分工协作**：8个专业智能体 + 1个总经理，高效完成创作任务。
 
@@ -4016,3 +4020,31 @@ AI读取角色档案（如有）
 4. 选择完成后询问：是否保存设置供以后使用？
    - 是 → 保存到配置文件
    - 否 → 本次使用，下次再询问
+
+## Author
+
+**python-0612**
+
+## License
+
+MIT License
+
+Copyright (c) 2026 python-0612
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
