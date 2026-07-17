@@ -147,6 +147,136 @@ FEISHU_GROUP_ID=oc_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 - 有异议：回复"异议说明"
 ```
 
+## 卡片消息模板
+
+### 1. 章节完成卡片
+```json
+{
+  "header": {
+    "title": { "tag": "plain_text", "content": "📚 章节完成" },
+    "template": "green"
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "**第{num}章《{title}》** 已完成\n\n📊 字数：{words}字 | 耗时：{time}分钟"
+      }
+    },
+    {
+      "tag": "action",
+      "actions": [
+        { "tag": "button", "text": { "tag": "plain_text", "content": "查看内容" }, "type": "primary", "url": "{url}" },
+        { "tag": "button", "text": { "tag": "plain_text", "content": "同步到文档" }, "type": "default", "value": { "action": "sync_doc" } }
+      ]
+    }
+  ]
+}
+```
+
+### 2. 审计结果卡片
+```json
+{
+  "header": {
+    "title": { "tag": "plain_text", "content": "📋 审计结果" },
+    "template": "blue"
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "**第{num}章审计完成**\n\n✅ 合规性：{score1}/100\n✅ 连贯性：{score2}/100\n✅ 一致性：{score3}/100"
+      }
+    },
+    {
+      "tag": "action",
+      "actions": [
+        { "tag": "button", "text": { "tag": "plain_text", "content": "通过" }, "type": "primary", "value": { "action": "approve" } },
+        { "tag": "button", "text": { "tag": "plain_text", "content": "需要修改" }, "type": "danger", "value": { "action": "reject" } }
+      ]
+    }
+  ]
+}
+```
+
+### 3. 创作进度卡片
+```json
+{
+  "header": {
+    "title": { "tag": "plain_text", "content": "📈 创作进度" },
+    "template": "purple"
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "**当前进度**：第{current}章/共{total}章\n**完成度**：{progress}%\n**今日新增**：{today_words}字"
+      }
+    },
+    {
+      "tag": "progress",
+      "percent": "{progress}"
+    }
+  ]
+}
+```
+
+### 4. 审批请求卡片
+```json
+{
+  "header": {
+    "title": { "tag": "plain_text", "content": "📝 审批请求" },
+    "template": "orange"
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "**{type}** 待审批\n\n{content_preview}"
+      }
+    },
+    {
+      "tag": "action",
+      "actions": [
+        { "tag": "button", "text": { "tag": "plain_text", "content": "同意" }, "type": "primary", "value": { "action": "approve", "id": "{id}" } },
+        { "tag": "button", "text": { "tag": "plain_text", "content": "拒绝" }, "type": "danger", "value": { "action": "reject", "id": "{id}" } },
+        { "tag": "button", "text": { "tag": "plain_text", "content": "查看详情" }, "type": "default", "url": "{detail_url}" }
+      ]
+    }
+  ]
+}
+```
+
+### 5. 错误告警卡片
+```json
+{
+  "header": {
+    "title": { "tag": "plain_text", "content": "⚠️ 错误告警" },
+    "template": "red"
+  },
+  "elements": [
+    {
+      "tag": "div",
+      "text": {
+        "tag": "lark_md",
+        "content": "**错误类型**：{error_type}\n**错误信息**：{error_msg}\n**发生时间**：{time}"
+      }
+    },
+    {
+      "tag": "action",
+      "actions": [
+        { "tag": "button", "text": { "tag": "plain_text", "content": "重试" }, "type": "primary", "value": { "action": "retry" } },
+        { "tag": "button", "text": { "tag": "plain_text", "content": "查看详情" }, "type": "default", "url": "{log_url}" }
+      ]
+    }
+  ]
+}
+```
+
 ### 创作进度通知
 ```
 📈 创作进度更新
