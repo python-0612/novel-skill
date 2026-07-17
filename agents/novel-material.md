@@ -1,6 +1,6 @@
 ---
 description: 负责生成人物、场景、物品图片，管理素材库
-model: deepseek-v4-flash-free
+model: 
 mode: subagent
 color: "#87CEEB"
 steps: 30

@@ -1,6 +1,6 @@
 ---
 description: 负责根据大纲续写章节，生成章节内容和摘要
-model: deepseek-v4-flash-free
+model: 
 mode: subagent
 color: "#96CEB4"
 steps: 40

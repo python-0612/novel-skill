@@ -1,6 +1,6 @@
 ---
 description: 负责审计章节质量，检查合规性、连贯性、一致性，执行偏差检查
-model: deepseek-v4-flash-free
+model: 
 mode: subagent
 color: "#FFB347"
 steps: 30
