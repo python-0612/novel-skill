@@ -1,8 +1,7 @@
 {
   "name": "novel-skill-opencode",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "小说创作技能一键安装工具 - OpenCode智能体系统",
-  "main": "install.js",
   "bin": {
     "novel-skill": "./cli.js"
   },
@@ -11,8 +10,6 @@
   "author": "python-0612",
   "license": "MIT",
   "files": [
-    "install.js",
-    "install.bat",
     "cli.js",
     "skills/",
     "agents/",

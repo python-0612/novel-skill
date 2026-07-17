@@ -38,7 +38,9 @@ function createDir(dirPath) {
 function copyFile(source, target) {
   if (fs.existsSync(source)) {
     fs.copyFileSync(source, target);
-    console.log(`✓ 复制文件: ${path.basename(target)}`);
+    console.log(`✓ 复制: ${path.basename(target)}`);
+  } else {
+    console.log(`✗ 文件不存在: ${source}`);
   }
 }
 
@@ -62,24 +64,28 @@ function showHelp() {
 function install() {
   console.log('\n🚀 开始安装小说创作技能系统...\n');
 
+  // 创建目录
   createDir(paths.agents);
   createDir(paths.skills);
   createDir(paths.skillDir);
   createDir(paths.config);
 
-  console.log('\n📦 安装智能体文件...');
+  // 复制智能体文件
+  console.log('\n📦 安装智能体...');
   agentFiles.forEach(file => {
     const source = path.join(sourceDir, 'agents', file);
     const target = path.join(paths.agents, file);
     copyFile(source, target);
   });
 
-  console.log('\n📦 安装技能文件...');
+  // 复制技能文件
+  console.log('\n📦 安装技能...');
   const skillSource = path.join(sourceDir, 'skills', 'SKILL.md');
   const skillTarget = path.join(paths.skillDir, 'SKILL.md');
   copyFile(skillSource, skillTarget);
 
-  console.log('\n📦 安装配置文件...');
+  // 复制配置文件
+  console.log('\n📦 安装配置...');
   const configSource = path.join(sourceDir, 'config', 'AGENTS.md');
   const configTarget = path.join(paths.config, 'AGENTS.md');
   copyFile(configSource, configTarget);
@@ -89,10 +95,9 @@ function install() {
   copyFile(novellaSource, novellaTarget);
 
   console.log('\n✅ 安装完成！\n');
-  console.log('📝 使用方法：');
+  console.log('📝 下一步：');
   console.log('   1. 重启OpenCode');
-  console.log('   2. 说"使用小说创作技能"或"调用novel skill"');
-  console.log('   3. 核心规则已自动加载，无需每次调用\n');
+  console.log('   2. 说"使用小说创作技能"或"调用novel skill"\n');
 }
 
 function uninstall() {
@@ -102,20 +107,20 @@ function uninstall() {
     const target = path.join(paths.agents, file);
     if (fs.existsSync(target)) {
       fs.unlinkSync(target);
-      console.log(`✓ 删除文件: ${file}`);
+      console.log(`✓ 删除: ${file}`);
     }
   });
 
   const skillTarget = path.join(paths.skillDir, 'SKILL.md');
   if (fs.existsSync(skillTarget)) {
     fs.unlinkSync(skillTarget);
-    console.log(`✓ 删除文件: SKILL.md`);
+    console.log(`✓ 删除: SKILL.md`);
   }
 
   const configTarget = path.join(paths.config, 'AGENTS.md');
   if (fs.existsSync(configTarget)) {
     fs.unlinkSync(configTarget);
-    console.log(`✓ 删除文件: AGENTS.md`);
+    console.log(`✓ 删除: AGENTS.md`);
   }
 
   console.log('\n✅ 卸载完成！\n');
