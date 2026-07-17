@@ -1,6 +1,6 @@
 {
   "name": "novel-skill-opencode",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "小说创作技能一键安装工具 - OpenCode智能体系统",
   "bin": {
     "novel-skill": "./cli.js"
