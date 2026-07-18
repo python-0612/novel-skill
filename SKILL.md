@@ -1,6 +1,6 @@
 ---
 name: novel
-version: 9.1.0
+version: 9.2.0
 description: "小说创作与视频生成助手：智能体分工协作系统。包含7个专业智能体和1个总经理，支持流水线模式。从想法到成品（小说+封面+短剧）全自动完成。"
 author: python-0612
 license: MIT
@@ -1922,3 +1922,169 @@ AI：正在加载 novel skill... [自动加载]
     ↓
 正常执行
 ```
+
+---
+
+## 记忆系统（自动检测与保存）
+
+### 功能说明
+自检时自动检测模型信息、用户习惯，并保存到全局记忆文件。
+
+### 记忆文件位置
+```
+~/.local/share/mimocode/memory/global/MEMORY.md
+```
+
+### 记忆内容
+
+#### 1. 模型信息（自动检测）
+
+**检测流程：**
+```
+自检开始
+    ↓
+读取智能体配置
+    ↓
+检查模型字段
+    ↓
+├── 有模型 → 联网查询模型信息
+│           ↓
+│       检测速率限制
+│           ↓
+│       保存到记忆
+└── 无模型 → 推荐免费模型
+            ↓
+        引导用户配置
+```
+
+**保存格式：**
+```json
+{
+  "model_info": {
+    "opencode/deepseek-v4-flash-free": {
+      "provider": "OpenCode",
+      "model_name": "DeepSeek V4 Flash Free",
+      "type": "chat",
+      "status": "active",
+      "pricing": {
+        "input": "free",
+        "output": "free"
+      },
+      "rate_limits": {
+        "requests_per_minute": "待检测",
+        "tokens_per_minute": "待检测"
+      },
+      "features": ["中文支持", "代码生成", "文本创作", "免费使用"],
+      "last_checked": "2026-07-18T12:00:00Z"
+    }
+  }
+}
+```
+
+#### 2. 用户操作习惯（自动记录）
+
+**记录内容：**
+- 常用操作类型和频率
+- 偏好设置（语言、风格、分辨率等）
+- 创作习惯（类型、风格、字数）
+- 使用时间模式
+
+**记录格式：**
+```json
+{
+  "user_habits": {
+    "frequent_operations": {
+      "生成大纲": { "count": 10, "last_used": "2026-07-18" },
+      "续写章节": { "count": 25, "last_used": "2026-07-18" }
+    },
+    "preferences": {
+      "language": "中文",
+      "prompt_style": "详细描述",
+      "auto_save": true,
+      "pipeline_mode": false,
+      "default_image_resolution": "1920x1080",
+      "default_video_resolution": "480p",
+      "default_video_duration": 18,
+      "preferred_platform": "agnes-ai.com",
+      "trigger_word": "1"
+    },
+    "creation_habits": {
+      "preferred_genre": "待学习",
+      "preferred_style": "待学习",
+      "avg_chapter_words": "待学习"
+    }
+  }
+}
+```
+
+### 自检时记忆更新流程
+
+```
+加载 novel skill
+    ↓
+执行自检流程
+    ↓
+步骤1：模型一致性检查
+    ↓
+步骤2：联网查询模型信息
+    ↓
+  ├── 查询模型提供商
+  ├── 查询模型特性
+  ├── 查询速率限制
+  └── 查询定价信息
+    ↓
+步骤3：保存模型信息到记忆
+    ↓
+步骤4：记录用户习惯
+    ↓
+步骤5：更新记忆文件
+    ↓
+自检完成
+```
+
+### 记忆查询功能
+
+用户可以随时查询记忆信息：
+
+```
+查询命令：
+- "查看模型信息"
+- "查看我的习惯"
+- "查看记忆"
+- "模型状态"
+```
+
+### 记忆更新规则
+
+| 触发条件 | 更新内容 |
+|----------|----------|
+| 每次自检 | 模型信息、用户习惯 |
+| 每次用户操作 | 操作频率、偏好设置 |
+| 每天一次 | 模型可用性、速率限制 |
+| 用户手动更新 | 偏好设置、创作习惯 |
+
+### 全局配置
+
+记忆系统配置保存在：`~/.opencode/skills/novel/memory_config.json`
+
+```json
+{
+  "memory_config": {
+    "auto_update": true,
+    "update_frequency": "daily",
+    "model_check_interval": 86400,
+    "habit_tracking": true,
+    "privacy_mode": "local_only",
+    "last_updated": "2026-07-18T12:00:00Z"
+  }
+}
+```
+
+### 记忆系统优势
+
+1. **自动检测** - 无需手动输入模型信息
+2. **联网查询** - 获取最新模型数据
+3. **速率限制检测** - 避免超出使用限制
+4. **用户习惯学习** - 个性化推荐
+5. **全局配置** - 跨项目共享
+6. **隐私保护** - 本地存储
