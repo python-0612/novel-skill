@@ -1,71 +1,116 @@
-import { readFileSync, existsSync } from "fs"
-import { join } from "path"
+import { readFileSync, existsSync, readdirSync, statSync } from "fs"
+import { join, extname } from "path"
 
 export default {
   // 在用户第一次对话时触发钩子
   "session.pre": async (input, output) => {
-    // 检查是否是第一次对话（通过检查sessionID或特定标志）
-    const sessionID = input.sessionID
+    // 获取当前工作目录
+    const cwd = process.cwd()
     
-    // 定义小说skills的可能位置
-    const novelSkillPaths = [
-      // 用户自定义的小说skills
-      join(process.env.HOME || process.env.USERPROFILE || "", ".mimocode", "skills", "novel"),
-      join(process.env.HOME || process.env.USERPROFILE || "", ".agents", "skills", "novel"),
-      join(process.env.HOME || process.env.USERPROFILE || "", ".codex", "skills", "novel"),
-      // 内置的小说skills
-      join(process.env.HOME || process.env.USERPROFILE || "", ".local", "share", "mimocode", "builtin_skills", "0.1.6", "skills", "novel"),
-      // 项目中的小说skills
-      ".mimocode/skills/novel",
-      ".agents/skills/novel",
-      ".codex/skills/novel",
-    ]
+    // 小说相关文件/文件夹的特征
+    const novelIndicators = {
+      // 文件夹名称特征
+      folderNames: [
+        "章节", "章", "卷", "素材", "剧本", "视频", "审计",
+        "novel", "story", "fiction", "writing"
+      ],
+      // 文件名称特征
+      fileNames: [
+        "大纲", "世界观", "角色", "人物", "设定", "简介",
+        "outline", "worldview", "character", "setting"
+      ],
+      // 文件扩展名特征（小说项目常见）
+      extensions: [".md", ".txt"],
+      // 文件内容关键词（用于检测.md文件）
+      contentKeywords: [
+        "小说", "章节", "大纲", "角色", "主角", "剧情",
+        "穿越", "重生", "都市", "仙侠", "玄幻", "科幻",
+        "言情", "悬疑", "创作", "写作"
+      ]
+    }
     
-    // 检查是否存在小说skills
-    let novelSkillFound = false
-    let novelSkillPath = ""
-    
-    for (const path of novelSkillPaths) {
-      if (existsSync(path)) {
-        novelSkillFound = true
-        novelSkillPath = path
-        break
+    // 检查函数：扫描当前目录
+    const scanDirectory = (dir: string): { found: boolean; reason: string } => {
+      try {
+        const items = readdirSync(dir)
+        
+        for (const item of items) {
+          const itemPath = join(dir, item)
+          const stat = statSync(itemPath)
+          
+          // 检查文件夹名称
+          if (stat.isDirectory()) {
+            const lowerItem = item.toLowerCase()
+            for (const folderName of novelIndicators.folderNames) {
+              if (lowerItem.includes(folderName.toLowerCase())) {
+                return { found: true, reason: `找到小说相关文件夹: ${item}` }
+              }
+            }
+          }
+          
+          // 检查文件名称
+          if (stat.isFile()) {
+            const fileName = item.toLowerCase()
+            const ext = extname(item).toLowerCase()
+            
+            // 检查文件名是否包含小说特征
+            for (const fileNameIndicator of novelIndicators.fileNames) {
+              if (fileName.includes(fileNameIndicator.toLowerCase())) {
+                return { found: true, reason: `找到小说相关文件: ${item}` }
+              }
+            }
+            
+            // 检查.md文件内容
+            if (ext === ".md" || ext === ".txt") {
+              try {
+                const content = readFileSync(itemPath, "utf-8")
+                const lowerContent = content.toLowerCase()
+                
+                // 检查内容是否包含小说关键词
+                for (const keyword of novelIndicators.contentKeywords) {
+                  if (lowerContent.includes(keyword.toLowerCase())) {
+                    return { found: true, reason: `文件 ${item} 包含小说相关内容` }
+                  }
+                }
+              } catch {
+                // 读取失败，跳过
+              }
+            }
+          }
+        }
+        
+        return { found: false, reason: "未找到小说相关文件" }
+      } catch (error) {
+        return { found: false, reason: `扫描目录失败: ${error}` }
       }
     }
     
-    // 如果找到小说skills，强制读取并加载
-    if (novelSkillFound) {
-      try {
-        // 读取小说skills的SKILL.md文件
-        const skillMdPath = join(novelSkillPath, "SKILL.md")
-        if (existsSync(skillMdPath)) {
-          const skillContent = readFileSync(skillMdPath, "utf-8")
-          
-          // 检查是否是小说相关的skills
-          if (skillContent.includes("小说") || skillContent.includes("novel") || 
-              skillContent.includes("创作") || skillContent.includes("写作")) {
-            
-            // 强制加载novel skill
-            output.messages = output.messages || []
-            output.messages.push({
-              role: "system",
-              content: `检测到小说skills已安装（路径：${novelSkillPath}），正在自动加载...`
-            })
-            
-            // 添加自动加载指令
-            output.system = output.system || []
-            output.system.push(`
-## 小说skills自动加载规则（强制执行）
+    // 扫描当前目录
+    const result = scanDirectory(cwd)
+    
+    // 如果找到小说相关文件，自动加载novel skill
+    if (result.found) {
+      output.messages = output.messages || []
+      output.messages.push({
+        role: "system",
+        content: `检测到当前目录有小说项目文件（${result.reason}），正在自动加载 novel skill...`
+      })
+      
+      // 添加自动加载指令
+      output.system = output.system || []
+      output.system.push(`
+## 小说项目自动检测规则（强制执行）
 
-**重要：检测到小说skills已安装，必须自动加载！**
+**重要：检测到当前目录有小说项目文件，必须自动加载！**
 
 ### 检测结果
-- 小说skills路径：${novelSkillPath}
+- 工作目录：${cwd}
+- 检测原因：${result.reason}
 - 检测时间：${new Date().toISOString()}
-- 状态：已找到
+- 状态：已找到小说项目
 
 ### 自动加载流程
-1. 检测到小说skills → 立即加载
+1. 检测到小说项目文件 → 立即加载
 2. 加载后自动执行自检流程
 3. 开始与用户交互
 
@@ -73,7 +118,7 @@ export default {
 - **必须调用skill工具加载novel**
 - **必须执行自检流程**
 - **必须调用智能体，不能自己干活**
-- **无论用户说什么，只要安装了小说skills就自动加载**
+- **只要当前目录有小说项目文件就自动加载**
 
 ### 触发关键词（全量覆盖）
 小说、创作、写书、novel、writing、写作、撰写、编写、写文、码字、码文、写稿、写手、作者、作家、网文、网络小说、网络文学、长篇、短篇、中篇、连载、完结、更新、断更、太监、烂尾、烂坑、填坑、挖坑、伏笔、铺垫
@@ -115,11 +160,6 @@ skill、技能、插件、钩子、hook、工具、命令、指令、帮助、he
 - **用户骂人也要加载（可能是对之前没加载的不满）**
 - **绝对服从用户指令**
 `)
-          }
-        }
-      } catch (error) {
-        console.error(`读取小说skills文件失败: ${error}`)
-      }
     }
   },
   
